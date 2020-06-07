@@ -1,12 +1,18 @@
-import { AxiosRequestConfig } from './types'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
 import xhr from './xhr'
 import { buildURL } from './helpers/url'
-import { transformRequest } from './helpers/data'
+import { transformRequest, transformResponse } from './helpers/data'
 import { processHeaders } from './helpers/headers'
 
-function axios(config: AxiosRequestConfig) {
+function axios(config: AxiosRequestConfig): AxiosPromise {
   processConfig(config)
-  xhr(config)
+  // xhr(config)
+  // return xhr(config)  
+  
+  // 改写成promise后，要把promise return出去
+  return xhr(config).then( (res) => {
+    return transformResponseData(res)
+  })
 }
 
 // 处理config 单独抽了一个函数
@@ -39,6 +45,11 @@ function transformHeaders(config: AxiosRequestConfig): any {
   // 导致没有赋值默认的 Content-Type
   const { headers = {}, data } = config
   return processHeaders(headers, data)
+}
+
+function transformResponseData(res: AxiosResponse): AxiosResponse {
+  res.data = transformResponse(res.data)
+  return res
 }
 
 export default axios
