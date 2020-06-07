@@ -74,6 +74,7 @@ function registerBaseRouter () {
   })
 }
 
+// 让请求随机出错来验证promise reject的情况
 function registerErrorRouter () {
   router.get('/error/get', function(req, res) {
     if (Math.random() > 0.5) {
@@ -86,6 +87,7 @@ function registerErrorRouter () {
     }
   })
 
+  // 延时返回
   router.get('/error/timeout', function(req, res) {
     setTimeout(() => {
       res.json({
