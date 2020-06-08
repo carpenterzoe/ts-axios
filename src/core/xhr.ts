@@ -1,6 +1,6 @@
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
-import { parseHeaders } from './helpers/headers'
-import { createError } from './helpers/error'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
+import { parseHeaders } from '../helpers/headers'
+import { createError } from '../helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
@@ -25,7 +25,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     // request.open(method.toLocaleUpperCase(), url, async: true)   
     // async报错 为什么？？
 
-    request.open(method.toUpperCase(), url)
+    request.open(method.toUpperCase(), url!)
 
     // 每当 readyState 属性改变时，就会调用该函数。
     request.onreadystatechange = function handleLoad() {
