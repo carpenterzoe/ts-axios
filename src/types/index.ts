@@ -20,8 +20,9 @@ export interface AxiosRequestConfig {
   timeout?: number
 }
 
-export interface AxiosResponse {
-  data: any   // 服务端返回的数据
+// 拓展泛型，用于接口调用的配置中指定返回数据类型，在后续返回时可以匹配
+export interface AxiosResponse<T = any> {
+  data: T   // 服务端返回的数据
   status: number    // http状态码
   statusText: string
   headers: any    // 响应头
@@ -30,9 +31,11 @@ export interface AxiosResponse {
 }
 
 // axios返回的数据类型  继承promise泛型接口 ???
-export interface AxiosPromise extends Promise<AxiosResponse> {
-  
-}
+// 再叠加一个泛型T ???
+
+// Promise<AxiosResponse<T>>  这里的 AxiosResponse<T> 表示 promise resolve拿到的参数 res
+// 为什么?????
+export interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {}
 
 // 增强错误信息
 export interface AxiosError extends Error {
@@ -43,19 +46,23 @@ export interface AxiosError extends Error {
   response?: AxiosResponse
 }
 
+// 这里调用方法时传入的泛型，和后面返回中的泛型，是怎样的对应关系??
+// 是传入的数据和返回的数据中，各有某一部分数据 是同种泛型?
+// 还是返回数据的一整个，是泛型T ???
 export interface Axios {
-  request(config: AxiosRequestConfig): AxiosPromise
-  get(url: string, config?: AxiosRequestConfig): AxiosPromise
-  delete(url: string, config?: AxiosRequestConfig): AxiosPromise
-  head(url: string, config?: AxiosRequestConfig): AxiosPromise
-  options(url: string, config?: AxiosRequestConfig): AxiosPromise
-  post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+  get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  delete<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  head<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  options<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
 // AxiosInstance 混合类型对象
 // 既有函数类型，又有继承而来的属性方法
 export interface AxiosInstance extends Axios {
-  (config: AxiosRequestConfig): AxiosPromise
+  <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+  <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }

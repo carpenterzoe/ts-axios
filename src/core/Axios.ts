@@ -3,7 +3,24 @@ import dispatchRequest from './dispatchRequest'
 
 // 创建axios类来实现接口中定义的方法
 export default class Axios {
-  request(config: AxiosRequestConfig): AxiosPromise {
+
+  // request改写成 兼容第一个参数传url的情况
+  // 函数内部实现改了，接口不需要改，只要内部实现兼容原本接口的定义即可
+
+  // request(config: AxiosRequestConfig): AxiosPromise {
+  //   return dispatchRequest(config)
+  // }
+
+  // 第一个参数有可能是url或者config
+  request(url: string | AxiosRequestConfig, config?: AxiosRequestConfig): AxiosPromise {
+    if (typeof url === 'string') {
+      if (!config) {
+        config = {}
+      }
+      config.url = url
+    } else {
+      config = url
+    }
     return dispatchRequest(config)
   }
 

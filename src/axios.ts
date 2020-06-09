@@ -9,6 +9,7 @@ function createInstance(): AxiosInstance {
   const context = new Axios()
 
   // Axios的request方法内部访问了this，所以这里需要bind绑定上下文
+  // 调axios作为方法时，实际上就是调用了这里的request
   const instance = Axios.prototype.request.bind(context)
 
   // 把Axios的原型属性和实例属性都拷贝到instance上
