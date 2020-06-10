@@ -6,6 +6,24 @@ export type Method = 'get' | 'GET'
 | 'put' | 'PUT'
 | 'patch' | 'PATCH'
 
+/**
+ * 新增泛型的逻辑先后步骤
+ * 
+ * 1. AxiosResponse<T = any>
+ * AxiosResponse中的data字段，会拿到类型T
+ * 
+ * 2. AxiosPromise<T = any> extends Promise<AxiosResponse<T>>
+ *  a) AxiosPromise<T = any> extends Promise
+ *     表示这个接口是返回一个promise
+ *  b) Promise<AxiosResponse<T>>
+ *     表示 当这个promise是resolve状态时，返回的数据类型是 AxiosResponse<T>
+ *  c) AxiosResponse<T>
+ *     和上面第1点的含义相同
+ * 所以最终实现AxiosPromise这个接口时，会返回一个promise，且resolve时，
+ * 这个promise返回AxiosResponse<T> 类型的数据，
+ * 返回值中的data字段，会体现出调用时方法时传入的T。
+ */
+
 export interface AxiosRequestConfig {
 
   // axios改成混合对象之后，url可能不传到config中，而是在外围配置

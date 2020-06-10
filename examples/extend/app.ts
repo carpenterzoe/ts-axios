@@ -51,6 +51,9 @@ interface User {
 
 function getUser<T>() {
   // 叠加泛型的写法???
+
+  // 这里传入的ResponseData，把User对象包装叠加了一层，同层级还有code, message
+  // 所以最后返回的数据，包含 code, result, message  3个字段
   return axios<ResponseData<T>>('/extend/user')
     // 这里 res.data 表示什么含义???  表示再返回一层promise的返回值，让外部.then直接拿到data里的值???
     .then(res => res.data)    
@@ -67,3 +70,5 @@ async function test() {
 /**
  * 为什么调用时传入了T，就能在返回数据中正确拿到这个类型？
  */
+
+test()
