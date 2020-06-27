@@ -16,7 +16,7 @@ function createInstance(): AxiosInstance {
   // 所以instance实现了 AxiosInstance这个接口的定义
   // 本身是一个函数 但是又有各个属性作为方法以供更方便地调用
   extend(instance, context)
-  
+
   return instance as AxiosInstance
 }
 

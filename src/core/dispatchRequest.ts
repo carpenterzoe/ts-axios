@@ -11,6 +11,8 @@ export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromis
   // return xhr(config)  
   
   // 改写成promise后，要把promise return出去
+
+  // 发送请求之后, promise中的 config 变成 res 传递下去
   return xhr(config).then( (res) => {
     return transformResponseData(res)
   })

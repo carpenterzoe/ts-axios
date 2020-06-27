@@ -141,6 +141,9 @@ function registerExtendRouter () {
 }
 
 function registerInterceptorRouter() {
+  // 这里写的路径 为什么在浏览器中 只有访问/interceptor 才会走到拦截器???
+  // 且访问 /interceptor 为什么自动发了2个请求 
+  // ( /interceptor 和 /interceptor/get )???
   router.get('/interceptor/get', function(req, res) {
     res.end('hello')
   })
