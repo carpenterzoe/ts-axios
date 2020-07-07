@@ -1,12 +1,13 @@
-import { AxiosInstance } from './types'
+import { AxiosInstance, AxiosRequestConfig } from './types'
 import Axios from './core/Axios'
 import { extend } from './helpers/util'
+import defaults from './defaults'
 
 
 // 实现Axios混合对象
 // 本身是一个函数 但又有各个属性方法
-function createInstance(): AxiosInstance {
-  const context = new Axios()
+function createInstance(config: AxiosRequestConfig): AxiosInstance {
+  const context = new Axios(config)
 
   // Axios的request方法内部访问了this，所以这里需要bind绑定上下文
   // 调axios作为方法时，实际上就是调用了这里的request
@@ -20,6 +21,6 @@ function createInstance(): AxiosInstance {
   return instance as AxiosInstance
 }
 
-const axios = createInstance()
+const axios = createInstance(defaults)
 
 export default axios

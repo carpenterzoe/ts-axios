@@ -27,3 +27,58 @@ export function extend<T, U>(to: T, from: U): T & U {
   }
   return to as T & U
 }
+
+// 深拷贝, 可接收多个对象
+export function deepMerge(...objs: any[]): any {
+
+  const result = Object.create(null)
+  /**
+    样例执行结果
+    result.a = 1
+   */
+
+  objs.forEach( obj => {
+    if (obj) {
+      Object.keys(obj).forEach( key => {
+        const val = obj[key]
+        
+        if (isPlainObject(val)) {
+
+          if (isPlainObject(result[key])) {
+            result[key] = deepMerge(result[key], val)
+          } else {
+            result[key] = deepMerge(val)
+          }
+
+        } else {
+          result[key] = val
+        }
+
+      })
+    }
+  })
+}
+
+// let objs = {
+
+//   // obj A  => 包含 普通键值对(非对象)
+//   A: {
+//     a: 1
+//   },
+
+//   // obj B  => 嵌套一层对象, 嵌套的对象里 包含普通键值对(非对象)
+//   B: {
+//     b: {
+//       son: 1
+//     }
+//   },
+
+//   // obj C  => 嵌套2层对象, 最末层为普通键值对(非对象), 其他为对象
+//   C: {
+//     c: {
+//       son: {
+//         grandSon: 1
+//       }
+//     }
+//   }
+// }

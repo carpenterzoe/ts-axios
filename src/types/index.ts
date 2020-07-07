@@ -36,6 +36,8 @@ export interface AxiosRequestConfig {
   headers?: any
   responseType?: XMLHttpRequestResponseType,   // ts中定义好的 响应类型
   timeout?: number
+
+  [propName: string]: any   // 添加索引签名 作用???
 }
 
 // 拓展泛型，用于接口调用的配置中指定返回数据类型，在后续返回时可以匹配
@@ -68,6 +70,7 @@ export interface AxiosError extends Error {
 // 是传入的数据和返回的数据中，各有某一部分数据 是同种泛型?
 // 还是返回数据的一整个，是泛型T ???
 export interface Axios {
+  defaults: AxiosRequestConfig
   interceptors: {
     request:  AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>
