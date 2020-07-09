@@ -3,7 +3,7 @@ import { isPlainObject, deepMerge } from '../helpers/util'
 
 // strat => strategy    策略模式
 
-// 默认策略，优先取val2的值
+// 默认策略：调用时有自定义配置，使用调用者的配置，没有的话 用默认配置
 function defaultStrat(val1: any, val2: any): any {
   return typeof val2 !== 'undefined' ? val2 : val1
 }

@@ -3,6 +3,7 @@ import xhr from './xhr'
 import { buildURL } from '../helpers/url'
 import { transformRequest, transformResponse } from '../helpers/data'
 import { processHeaders, flattenHeaders } from '../helpers/headers'
+import transform from './transform'
 
 // function axios(config: AxiosRequestConfig): AxiosPromise {
 export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
@@ -28,8 +29,14 @@ function processConfig(config: AxiosRequestConfig): void {
   // 因为 transformRequestData 对 data进行了转换
   // 普通对象执行了transformRequestData后，转成了JSON字符串
   // 再执行transformHeaders时，无法再次被判断为普通对象
-  config.headers = transformHeaders(config)
-  config.data = transformRequestData(config)
+
+  /**
+    config.headers = transformHeaders(config)
+    config.data = transformRequestData(config)
+    上述处理统一抽离 让 transform 函数来处理了
+   */
+  config.data = transform(config.data, config.headers, config.transformRequest)
+  
   config.headers = flattenHeaders(config.headers, config.method!)
 }
 
@@ -39,20 +46,28 @@ function transformURL(config: AxiosRequestConfig): string {
   return buildURL(url!, params)   // 类型断言，表示这里一定会有url
 }
 
-function transformRequestData(config: AxiosRequestConfig): any {
-  return transformRequest(config.data)
-}
+/**
+ * transform 函数直接替换了原本的下面2个方法
 
-function transformHeaders(config: AxiosRequestConfig): any {
-  // headers 在解构赋值时给一个默认值
-  // 避免 processHeaders 函数调用时，没有headers传入
-  // 导致没有赋值默认的 Content-Type
-  const { headers = {}, data } = config
-  return processHeaders(headers, data)
-}
+  function transformRequestData(config: AxiosRequestConfig): any {
+    return transformRequest(config.data)
+  }
+
+  function transformHeaders(config: AxiosRequestConfig): any {
+    // headers 在解构赋值时给一个默认值
+    // 避免 processHeaders 函数调用时，没有headers传入
+    // 导致没有赋值默认的 Content-Type
+    const { headers = {}, data } = config
+    return processHeaders(headers, data)
+  }
+ */
+
 
 function transformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transformResponse(res.data)
+  // 响应数据也改成直接统一调用transform
+  // res.data = transformResponse(res.data)
+
+  res.data = transform(res.data, res.headers, res.config.transformResponse)
   return res
 }
 
