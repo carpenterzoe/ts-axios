@@ -38,6 +38,7 @@ export interface AxiosRequestConfig {
   timeout?: number
   transformRequest?: AxiosTransformer | AxiosTransformer[]
   transformResponse?: AxiosTransformer | AxiosTransformer[]
+  cancelToken?: CancelToken
 
   [propName: string]: any   // 添加索引签名 作用???
 }
@@ -70,7 +71,7 @@ export interface AxiosError extends Error {
 
 // 这里调用方法时传入的泛型，和后面返回中的泛型，是怎样的对应关系??
 // 是传入的数据和返回的数据中，各有某一部分数据 是同种泛型?
-// 还是返回数据的一整个，是泛型T ???
+// 还是返回数据的一整个，是泛型T ??? 
 export interface Axios {
   defaults: AxiosRequestConfig
   interceptors: {
@@ -97,6 +98,10 @@ export interface AxiosInstance extends Axios {
 export interface AxiosStatic extends AxiosInstance {
   // config不传 则直接使用默认配置
   create(config?: AxiosRequestConfig): AxiosInstance
+
+  CancelToken: CancelTokenStatic    // ? 给 axios直接挂上了CancelToken属性 ??
+  Cancel: CancelStatic
+  isCancel:(value: any) => boolean
 }
 
 // 拦截器管理器 的对外接口
@@ -117,4 +122,45 @@ export interface RejectedFn {
 
 export interface AxiosTransformer {
   (data: any, headers?: any): any
+}
+
+// * CancelToken 取消实现的类
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel           // * promise resolve的参数
+}
+
+// * 取消函数
+export interface Canceler {
+  (message?: string): void
+}
+
+// * 取消执行器，传给CancelToken构造函数时传入
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+// * cancelToken 通过 source() 方法，返回这个对象类型
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+
+// ??? CancelTokenStatic 是 CancelToken 的 【类类型】
+// ? 里面包括 构造函数的定义 和静态方法的定义
+export interface CancelTokenStatic {
+  // * 返回值是 CancelToken 的实例类型
+  new(executor: CancelExecutor): CancelToken
+
+  // ? 类类型里面的静态方法如何调用
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+
+// 类类型 ???
+export interface CancelStatic {
+  new(message?: string): Cancel
 }

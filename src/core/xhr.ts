@@ -7,7 +7,10 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   // ajax请求promise化
   return new Promise( (resolve, reject) => {
 
-    const { url, method = 'get', data = null, headers, responseType, timeout } = config
+    const { 
+      url, headers, responseType, timeout, cancelToken,
+      method = 'get', data = null
+    } = config
 
     const request = new XMLHttpRequest()
 
@@ -88,6 +91,19 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         request.setRequestHeader(name, headers[name])
       }
     })
+
+    // ? 这里的 cancelToken 是 CancelToken类的实例，但是这个实例是从哪来的？？？
+    // ? 外部传入的方法 执行 executor 从哪传入了 ???
+
+    // * 这里只是预定义一个取消行为，
+    // * 当 cancelToken 实例对象调用了executor传入的取消方法，才会真正取消
+
+    if (cancelToken) {
+      cancelToken.promise.then(reason => {
+        request.abort()
+        reject(reason)
+      })
+    }
 
     request.send(data)
 
