@@ -93,7 +93,10 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     })
 
     // ? 这里的 cancelToken 是 CancelToken类的实例，但是这个实例是从哪来的？？？
+    // * --- axios传入config的时候new得到的实例
+
     // ? 外部传入的方法 执行 executor 从哪传入了 ???
+    // * -- 发请求并且 new CancelToken 时 传入
 
     // * 这里只是预定义一个取消行为，
     // * 当 cancelToken 实例对象调用了executor传入的取消方法，才会真正取消

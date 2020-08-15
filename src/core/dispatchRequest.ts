@@ -7,6 +7,10 @@ import transform from './transform'
 
 // function axios(config: AxiosRequestConfig): AxiosPromise {
 export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+  
+  // ? 在请求之前 throw，后续步骤都不会继续执行了吗? 
+  throwIfCancellationRequested(config)
+
   processConfig(config)
   // xhr(config)
   // return xhr(config)  
@@ -69,6 +73,12 @@ function transformResponseData(res: AxiosResponse): AxiosResponse {
 
   res.data = transform(res.data, res.headers, res.config.transformResponse)
   return res
+}
+
+function throwIfCancellationRequested(config: AxiosRequestConfig): void {
+  if(config.cancelToken) {
+    config.cancelToken.throwIfRequested()
+  }
 }
 
 // export default axios

@@ -99,6 +99,7 @@ export interface AxiosStatic extends AxiosInstance {
   // config不传 则直接使用默认配置
   create(config?: AxiosRequestConfig): AxiosInstance
 
+  // ? 静态类型 ???
   CancelToken: CancelTokenStatic    // ? 给 axios直接挂上了CancelToken属性 ??
   Cancel: CancelStatic
   isCancel:(value: any) => boolean
@@ -128,6 +129,8 @@ export interface AxiosTransformer {
 export interface CancelToken {
   promise: Promise<Cancel>
   reason?: Cancel           // * promise resolve的参数
+
+  throwIfRequested(): void
 }
 
 // * 取消函数
@@ -135,7 +138,9 @@ export interface Canceler {
   (message?: string): void
 }
 
-// * 取消执行器，传给CancelToken构造函数时传入
+// * 取消执行器
+// * 自己既接收别的函数作为参数（保存Cancel方法时）
+// * 也作为参数，传入其他函数中（传给CancelToken构造函数）
 export interface CancelExecutor {
   (cancel: Canceler): void
 }
@@ -160,7 +165,7 @@ export interface Cancel {
   message?: string
 }
 
-// 类类型 ???
+// ? 类类型 ???
 export interface CancelStatic {
   new(message?: string): Cancel
 }

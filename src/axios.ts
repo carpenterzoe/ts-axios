@@ -3,7 +3,10 @@ import Axios from './core/Axios'
 import { extend } from './helpers/util'
 import defaults from './defaults'
 import mergeConfig from './core/mergeConfig'
+import CancelToken from './cancel/CancelToken'
 
+// ??? 这种引入方式 ?????
+import Cancel, { isCancel } from './cancel/Cancel'
 
 // 实现Axios混合对象
 // 本身是一个函数 但又有各个属性方法
@@ -35,5 +38,11 @@ const axios = createInstance(defaults)
 axios.create = function create(config) {
   return createInstance(mergeConfig(defaults, config))
 }
+
+// TODO 要搞清楚这些问题：
+// TODO 这几个东西是怎么挂载过来的，挂载过来的具体是什么东西，以及挂载之后能实现什么
+axios.CancelToken = CancelToken
+axios.Cancel = Cancel
+axios.isCancel = isCancel
 
 export default axios

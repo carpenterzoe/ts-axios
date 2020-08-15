@@ -2,20 +2,24 @@
 
 import { CancelExecutor, CancelTokenSource, Canceler } from '../types'
 
+// * 类的定义，既能当作值 也能当作类型使用
+// * 这里是当作值使用，所以不从types里面引入
+import Cancel from './Cancel'   // * 从类当中引入Cancel
+
 // * 函数类型
 interface ResolvePromise {
-  (reason?: string): void
+  (reason?: Cancel): void
 }
 
 export default class CancelToken {
-  promise: Promise<string>
-  reason?: string
+  promise: Promise<Cancel>
+  reason?: Cancel
 
   // * cancelToken类的构造函数 的参数 为CancelExecutor类型的函数
   constructor(executor: CancelExecutor) {
     let resolvePromise: ResolvePromise
 
-    this.promise = new Promise<string>(resolve => {
+    this.promise = new Promise<Cancel>(resolve => {
       // resolvePromise 指向 resolve函数
       // 后续调用 executor 时， 执行了resolvePromise，就相当于执行了 resolve
       resolvePromise = resolve
@@ -35,7 +39,7 @@ export default class CancelToken {
       if (this.reason) {
         return
       }
-      this.reason = message
+      this.reason = new Cancel(message)
       resolvePromise(this.reason)
     })
   }
@@ -44,6 +48,12 @@ export default class CancelToken {
    * new CancelToken() 时，resolvePromise 会保存 promise的resolve
    * 所以 当实例调用 executor时，就可以直接手动把promise状态变成 resolve
    */
+
+  throwIfRequested() {
+    if(this.reason) {
+      throw this.reason
+    }
+  }
 
 
   // ??? source() 这种调用的方式的意义是什么，和上面那种调用方式有什么区别 ? 
